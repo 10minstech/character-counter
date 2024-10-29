@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>စာသားခွဲခြမ်းစိတ်ဖြာမှု</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            font-family: 'Padauk', sans-serif;
+        }
+
+        .counter-card {
+            transition: all 0.3s ease;
+            border: none;
+            background: white;
+            border-radius: 15px;
+        }
+
+        .counter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        textarea {
+            resize: none;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+        }
+
+        .btn-custom {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            border: none;
+            color: white;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .stats-detail {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .toolbar {
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .reading-time {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .animate-pulse {
+            animation: pulse 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h1 class="text-center mb-4">
+            <span class="gradient-text">စာသားခွဲခြမ်းစိတ်ဖြာမှု</span>
+        </h1>
+
+        <div class="row justify-content-center mb-3">
+            <div class="col-md-8">
+                <div class="toolbar d-flex justify-content-between align-items-center shadow-sm">
+                    <div class="buttons">
+                        <button class="btn btn-custom btn-sm me-2" id="copyButton">
+                            <i class="fas fa-copy"></i> ကူးယူရန်
+                        </button>
+                        <button class="btn btn-custom btn-sm me-2" id="downloadButton">
+                            <i class="fas fa-download"></i> ဒေါင်းလုဒ်
+                        </button>
+                        <button class="btn btn-danger btn-sm" id="clearButton">
+                            <i class="fas fa-trash"></i> ရှင်းလင်းရန်
+                        </button>
+                    </div>
+                    <div class="reading-time">
+                        <i class="fas fa-clock"></i> ဖတ်ရှုချိန်: <span id="readingTime">၀ မိနစ်</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-8">
+                <textarea 
+                    class="form-control shadow-sm" 
+                    id="textInput" 
+                    rows="8" 
+                    placeholder="ဤနေရာတွင် စာသားများရိုက်ထည့်ပါ သို့မဟုတ် ကူးယူထည့်သွင်းပါ..."
+                ></textarea>
+            </div>
+        </div>
+
+        <div class="row justify-content-center g-3">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card counter-card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><i class="fas fa-text-width"></i> စကားလုံးများ</h5>
+                        <p class="number" id="charCount">၀</p>
+                        <p class="text-muted">(နေရာလွတ်များပါ)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card counter-card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><i class="fas fa-compress"></i> စကားလုံးများ</h5>
+                        <p class="number" id="charNoSpaceCount">၀</p>
+                        <p class="text-muted">(နေရာလွတ်များမပါ)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card counter-card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><i class="fas fa-words"></i> စကားလုံးအရေအတွက်</h5>
+                        <p class="number" id="wordCount">၀</p>
+                        <div id="uniqueWords" class="stats-detail">တူညီသော: ၀</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card counter-card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><i class="fas fa-paragraph"></i> ဝါကျများ</h5>
+                        <p class="number" id="sentenceCount">၀</p>
+                        <div id="averageWords" class="stats-detail">ပျမ်းမျှစကားလုံး: ၀</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">နောက်ထပ်အချက်အလက်များ</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><i class="fas fa-percentage"></i> နေရာလွတ်များ: <span id="spaceCount">၀</span></p>
+                                <p><i class="fas fa-paragraph"></i> စာပိုဒ်များ: <span id="paragraphCount">၀</span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><i class="fas fa-sort-numeric-up"></i> ဂဏန်းများ: <span id="numberCount">၀</span></p>
+                                <p><i class="fas fa-exclamation"></i> အထူးအက္ခရာများ: <span id="specialCharCount">၀</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const textInput = document.getElementById('textInput');
+        const elements = {
+            charCount: document.getElementById('charCount'),
+            charNoSpaceCount: document.getElementById('charNoSpaceCount'),
+            wordCount: document.getElementById('wordCount'),
+            sentenceCount: document.getElementById('sentenceCount'),
+            spaceCount: document.getElementById('spaceCount'),
+            paragraphCount: document.getElementById('paragraphCount'),
+            numberCount: document.getElementById('numberCount'),
+            specialCharCount: document.getElementById('specialCharCount'),
+            uniqueWords: document.getElementById('uniqueWords'),
+            averageWords: document.getElementById('averageWords'),
+            readingTime: document.getElementById('readingTime')
+        };
+
+        // Convert number to Burmese digits
+        function toBurmese(number) {
+            const burmese = ['၀','၁','၂','၃','၄','၅','၆','၇','၈','၉'];
+            return number.toString().replace(/[0-9]/g, d => burmese[d]);
+        }
+
+        function animateNumber(element, value) {
+            element.classList.add('animate-pulse');
+            element.textContent = toBurmese(value);
+            setTimeout(() => {
+                element.classList.remove('animate-pulse');
+            }, 500);
+        }
+
+        function updateCounts() {
+            const text = textInput.value;
+            
+            // Basic counts
+            animateNumber(elements.charCount, text.length);
+            animateNumber(elements.charNoSpaceCount, text.replace(/\s/g, '').length);
+            
+            // Word count
+            const words = text.trim().split(/\s+/);
+            const wordCount = text.trim() === '' ? 0 : words.length;
+            animateNumber(elements.wordCount, wordCount);
+            
+            // Unique words
+            const uniqueWords = new Set(words.map(word => word.toLowerCase())).size;
+            elements.uniqueWords.textContent = `တူညီသော: ${toBurmese(text.trim() === '' ? 0 : uniqueWords)}`;
+            
+            // Sentence count
+            const sentences = text.split(/[။!?]+/).filter(sentence => sentence.trim().length > 0);
+            animateNumber(elements.sentenceCount, sentences.length);
+            
+            // Average words per sentence
+            const avgWords = sentences.length ? (wordCount / sentences.length).toFixed(1) : 0;
+            elements.averageWords.textContent = `ပျမ်းမျှစကားလုံး: ${toBurmese(avgWords)}`;
+            
+            // Space count
+            const spaces = (text.match(/\s/g) || []).length;
+            elements.spaceCount.textContent = toBurmese(spaces);
+            
+            // Paragraph count
+            const paragraphs = text.split(/\n\s*\n/).filter(para => para.trim().length > 0).length;
+            elements.paragraphCount.textContent = toBurmese(paragraphs);
+            
+            // Number count
+            const numbers = (text.match(/[\d၀-၉]+/g) || []).length;
+            elements.numberCount.textContent = toBurmese(numbers);
+            
+            // Special character count
+            const specialChars = (text.match(/[^a-zA-Z0-9\s၀-၉က-အ]/g) || []).length;
+            elements.specialCharCount.textContent = toBurmese(specialChars);
+            
+            // Reading time (assuming 200 words per minute)
+            const readingTimeMin = Math.ceil(wordCount / 200);
+            elements.readingTime.textContent = `${toBurmese(readingTimeMin)} မိနစ်`;
+        }
+
+        // Event listeners
+        textInput.addEventListener('input', updateCounts);
+
+        document.getElementById('clearButton').addEventListener('click', () => {
+            textInput.value = '';
+            updateCounts();
+            textInput.focus();
+        });
+
+        document.getElementById('copyButton').addEventListener('click', () => {
+            textInput.select();
+            document.execCommand('copy');
+            alert('စာသားကို ကူးယူပြီးပါပြီ!');
+        });
+
+        document.getElementById('downloadButton').addEventListener('click', () => {
+            const text = textInput.value;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'text-analysis.txt';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+</html>
